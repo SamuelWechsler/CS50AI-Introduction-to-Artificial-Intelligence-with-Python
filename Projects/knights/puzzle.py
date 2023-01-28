@@ -16,11 +16,11 @@ knowledge0 = And(
     Or(AKnight, AKnave),
     Biconditional(AKnight, Not(AKnave)),
 
-    # A says "I am both a knight and a knave."
-    # Statement is false if A is a knave.
-    Implication(AKnave, Not(And(AKnight, AKnave))),
+    # # A says "I am both a knight and a knave."
+    # # Statement is false if A is a knave.
+    # Implication(AKnave, Not(And(AKnight, AKnave))),
     # Statement is true if A is a knight.
-    Implication(AKnight, And(AKnight, AKnave))
+    Biconditional(AKnight, And(AKnight, AKnave))
 )
 
 # Puzzle 1
@@ -34,8 +34,7 @@ knowledge1 = And(
     Biconditional(BKnight, Not(BKnave)),
 
     # A says "We are both knaves."
-    Implication(AKnight, And(AKnave, BKnave)),
-    Implication(AKnave, Not(And(AKnave, BKnave)))
+    Biconditional(AKnight, And(AKnave, BKnave))
 )
 
 # Puzzle 2
@@ -49,12 +48,10 @@ knowledge2 = And(
     Biconditional(BKnight, Not(BKnave)),
 
     # A says "We are the same kind."
-    Implication(AKnight, Or(And(AKnight, BKnight), And(AKnave, BKnave))),
-    Implication(AKnave, Or(And(AKnight, BKnave), And(AKnave, BKnight))),
+    Biconditional(AKnight, Or(And(AKnight, BKnight), And(AKnave, BKnave))),
 
     # B says "We are of different kinds."
-    Implication(BKnight, Or(And(AKnight, BKnave), And(AKnave, BKnight))),
-    Implication(BKnave, Or(And(AKnight, BKnight), And(AKnave, BKnave)))
+    Biconditional(BKnight, Or(And(AKnight, BKnave), And(AKnave, BKnight)))
 )
 
 # Puzzle 3
@@ -72,20 +69,16 @@ knowledge3 = And(
     Biconditional(CKnight, Not(CKnave)),
 
     # A says either "I am a knight." or "I am a knave."
-    Implication(AKnight, Or(AKnight, AKnave)),
-    Implication(AKnave, And(Not(AKnight), Not(AKnave))),
+    Biconditional(AKnight, Or(AKnight, AKnave)),
 
     # B says "A said 'I am a knave'."
-    Implication(BKnight, Biconditional(AKnight, AKnave)),
-    Implication(BKnave, Not(Biconditional(AKnight, AKnave))),
+    Biconditional(BKnight, Biconditional(AKnight, AKnave)),
 
     # B says "C is a knave."
-    Implication(BKnight, CKnave),
-    Implication(BKnave, CKnight),
+    Biconditional(BKnight, CKnave),
 
     # C says "A is a knight."
-    Implication(CKnight, Biconditional(AKnight, AKnight)),
-    Implication(CKnave, Not(Biconditional(AKnight, AKnight)))
+    Biconditional(CKnight, Biconditional(AKnight, AKnight))
 )
 
 
