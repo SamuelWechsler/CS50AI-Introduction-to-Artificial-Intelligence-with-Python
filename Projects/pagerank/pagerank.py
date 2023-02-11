@@ -199,8 +199,8 @@ def iterate_pagerank(corpus, damping_factor):
     
     return pageranks
 
-input = {"1.html": {"2.html", "3.html"}, "2.html": {"3.html"}, "3.html": set()}
-print(iterate_pagerank(input, 0.85))
+# input = {"1.html": {"2.html", "3.html"}, "2.html": {"3.html"}, "3.html": set()}
+# print(iterate_pagerank(input, 0.85))
 
 if __name__ == "__main__":
     main()
