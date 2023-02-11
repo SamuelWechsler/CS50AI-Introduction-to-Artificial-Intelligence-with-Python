@@ -59,17 +59,25 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    player_move = player(board)
-
-    new_board = copy.deepcopy(board)
+    if type(action) != tuple or len(action) != 2:
+        print(action)
+        raise Exception("unvalid move")
+    
     i, j = action
 
     if board[i][j] != None:
         raise Exception("unvalid move")
-    else:
-        new_board[i][j] = player_move
 
-    return new_board
+    player_ = player(board)
+
+    result = copy.deepcopy(board)
+
+    if board[i][j] != None:
+        raise Exception("unvalid move")
+    else:
+        result[i][j] = player_
+
+    return result
 
 
 def winner(board):
@@ -117,44 +125,54 @@ def utility(board):
     if winner(board) is None:
         return 0
 
-
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    a = Minimax()
     if terminal(board):
         return None
     if player(board) == X:
-        return maxValue(board)[1]
+        return a.maxValue(board)[1]
     elif player(board) == O:
-        return minValue(board)[1]
+        return a.minValue(board)[1]
+
+class Minimax():
+    """
+    Class that implements alpha beta pruning.
+    """
+    def __init__(self):
+        self.absMax = -math.inf
+        self.absMin = math.inf
+
+    def maxValue(self, board):
+        optimal_move = ()
+        if terminal(board):
+            return utility(board), optimal_move
+        
+        v = -math.inf
+        for action in actions(board):
+            minV = self.minValue(result(board, action))[0]
+            if minV < self.absMax:
+                return -1, action
+            if minV > v:
+                v = minV
+                optimal_move = action
+        return v, optimal_move
 
 
-def maxValue(board):
-    optimal_move = ()
+    def minValue(self, board):
+        optimal_move = ()
 
-    if terminal(board):
-        return utility(board), optimal_move
+        if terminal(board):
+            return utility(board), optimal_move
 
-    v = - math.inf
-    for action in actions(board):
-        minV = minValue(result(board, action))[0]
-        if minV > v:
-            v = minV
-            optimal_move = action
-    return v, optimal_move
-
-
-def minValue(board):
-    optimal_move = ()
-
-    if terminal(board):
-        return utility(board), optimal_move
-
-    v = math.inf
-    for action in actions(board):
-        maxV = maxValue(result(board, action))[0]
-        if maxV < v:
-            v = maxV
-            optimal_move = action
-    return v, optimal_move
+        v = math.inf
+        for action in actions(board):
+            maxV = self.maxValue(result(board, action))[0]
+            if maxV > self.absMin:
+                return 1, action
+            if maxV < v:
+                v = maxV
+                optimal_move = action
+        return v, optimal_move

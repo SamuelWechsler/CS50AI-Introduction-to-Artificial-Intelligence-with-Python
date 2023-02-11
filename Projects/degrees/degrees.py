@@ -98,18 +98,17 @@ def shortest_path(source, target):
     frontier.add(start)
 
     # Initialize an empty explored set
-    explored = set()
+    explored_states = set()
 
     while True:
-
-        # If nothing left in frontier, then no path
+        # If left in frontier, no solution
         if frontier.empty():
             return None
 
         # Choose a node from the frontier
         node = frontier.remove()
 
-        # If node is the goal, then we have a solution
+        # If node is the goal, "unpack" and return solution
         if node.state == target:
             solution = []
             while node.parent is not None:
@@ -119,22 +118,22 @@ def shortest_path(source, target):
             return solution
 
         # Mark node as explored
-        explored.add(node.state)
+        explored_states.add(node.state)
 
         # Add neighbors to frontier
         for action, state in neighbors_for_person(node.state):
-            if not frontier.contains_state(state) and state not in explored:
-                child = Node(state=state, parent=node, action=action)
+            if not frontier.contains_state(state) and state not in explored_states:
+                node = Node(state=state, parent=node, action=action)
 
-                if child.state == target:
+                if node.state == target:
                     solution = []
-                    while child.parent is not None:
-                        solution.append((child.action, child.state))
-                        child = child.parent
+                    while node.parent is not None:
+                        solution.append((node.action, node.state))
+                        node = node.parent
                     solution.reverse()
                     return solution
 
-                frontier.add(child)
+                frontier.add(node)
 
 
 def person_id_for_name(name):
