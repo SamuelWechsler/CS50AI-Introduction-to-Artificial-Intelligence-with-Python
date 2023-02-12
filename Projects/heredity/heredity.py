@@ -127,6 +127,43 @@ def powerset(s):
         )
     ]
 
+def gene_number(person, one_gene, two_genes):
+    """
+    This function returns the number of alleles a parent has.
+    """
+    pg = 0
+    if person in one_gene:
+        pg = 1
+    elif person in two_genes:
+        pg = 2
+    return pg
+
+
+def prob_child_gene(c_g, m_g, f_g):
+    """
+    This function returns the conditional probability that a child
+    of parents with mothergene and fathergene has a genome x.
+    """
+    # probability to pass on allele a, given genotyp
+    heritage = {
+        0 : PROBS["mutation"],
+        1 : (1 - PROBS["mutation"]) * 0.5,
+        2 : (1 - PROBS["mutation"])
+    }
+
+    if c_g == 0:
+        # probability = P(no allele from mother) * P(no allele from father)
+        return (1 - heritage[m_g]) * (1 - heritage[f_g])
+    
+    elif c_g == 1:
+        # prob = P(1 allele from mother) * P(0 allele from father) +
+        #        P(0 allele from mother) * P(1 allele from father)
+        return heritage[m_g] * (1 - heritage[f_g]) + heritage[f_g] * (1 - heritage[m_g])
+
+    elif c_g == 2:
+        # prob = P(1 allel from mother) * P(1 allele from father)
+        return heritage[m_g] * heritage[f_g]
+    
 
 def joint_probability(people, one_gene, two_genes, have_trait):
     """
@@ -139,7 +176,40 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-    raise NotImplementedError
+    joint_prob = 1
+
+    for person in people.keys():
+        # get number of alles of person
+        n = gene_number(person, one_gene, two_genes)
+
+        # check if person has trait
+        trait = person in have_trait
+
+        # if person has no parent
+        if people[person]["mother"] is None:
+            # calculate probability that person has gene n and trait
+            joint_prob *= PROBS["gene"][n] * PROBS["trait"][n][trait]
+            
+        # if person has parents
+        else:
+            m_g = gene_number(people[person]["mother"], one_gene, two_genes)
+            f_g = gene_number(people[person]["father"], one_gene, two_genes)
+            joint_prob *= prob_child_gene(n, m_g, f_g) * PROBS["trait"][n][trait]
+    
+    return joint_prob
+
+# # test
+# people = {
+#   'Harry': {'name': 'Harry', 'mother': 'Lily', 'father': 'James', 'trait': None},
+#   'James': {'name': 'James', 'mother': None, 'father': None, 'trait': True},
+#   'Lily': {'name': 'Lily', 'mother': None, 'father': None, 'trait': False}
+# }
+
+# one_gene = {"Harry"}
+# two_gene = {"James"}
+# has_trait = {"James"}
+
+# print(joint_probability(people, one_gene, two_gene, has_trait))
 
 
 def update(probabilities, one_gene, two_genes, have_trait, p):
@@ -149,16 +219,28 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
     Which value for each distribution is updated depends on whether
     the person is in `have_gene` and `have_trait`, respectively.
     """
-    raise NotImplementedError
+    for person in probabilities.keys():
+        # check number of alleles for person
+        n = gene_number(person, one_gene, two_genes)
 
+        # get trait of person
+        trait = person in have_trait
+
+        # update dictionary
+        probabilities[person]["gene"][n] += p
+        probabilities[person]["trait"][trait] += p        
 
 def normalize(probabilities):
     """
     Update `probabilities` such that each probability distribution
     is normalized (i.e., sums to 1, with relative proportions the same).
     """
-    raise NotImplementedError
+    for person in probabilities.keys():
+        for dist_type in probabilities[person].keys():
+            alpha = 1 / sum(list(probabilities[person][dist_type].values()))
 
+            for i in probabilities[person][dist_type].keys():
+                probabilities[person][dist_type][i] *= alpha
 
 if __name__ == "__main__":
     main()
