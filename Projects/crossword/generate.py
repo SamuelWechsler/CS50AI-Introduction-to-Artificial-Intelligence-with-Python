@@ -301,7 +301,6 @@ class CrosswordCreator():
 
         if len(unassigned) >= 1:
             return unassigned[0]
-        
 
 
     def backtrack(self, assignment):
@@ -324,7 +323,7 @@ class CrosswordCreator():
                 return self.backtrack(new_assignment)
         return 
 
-
+    
 def main():
 
     # Check usage
