@@ -15,6 +15,7 @@ class CrosswordCreator():
             var: self.crossword.words.copy()
             for var in self.crossword.variables
         }
+        self.counter = 0
 
     def letter_grid(self, assignment):
         """
@@ -272,6 +273,8 @@ class CrosswordCreator():
 
         return values
 
+        # return list(self.domains[var])
+
     def select_unassigned_variable(self, assignment):
         """
         Return an unassigned variable not already part of `assignment`.
@@ -302,6 +305,10 @@ class CrosswordCreator():
         if len(unassigned) >= 1:
             return unassigned[0]
 
+        # for var in self.crossword.variables:
+        #     if var not in assignment.keys():
+        #         return var
+
 
     def backtrack(self, assignment):
         """
@@ -312,16 +319,20 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
-        var = self.select_unassigned_variable(assignment)
-        if var is None:
+        if len(assignment) == len(self.crossword.variables):
             return assignment
-        
+
+        # try a new variable
+        var = self.select_unassigned_variable(assignment)
         for value in self.order_domain_values(var, assignment):
+            self.counter += 1
             new_assignment = assignment.copy()
             new_assignment[var] = value
             if self.consistent(new_assignment):
-                return self.backtrack(new_assignment)
-        return 
+                result = self.backtrack(new_assignment)
+                if result is not None:
+                    return result
+        return None
 
     
 def main():
@@ -339,6 +350,7 @@ def main():
     crossword = Crossword(structure, words)
     creator = CrosswordCreator(crossword)
     assignment = creator.solve()
+    print(creator.counter)
 
     # Print result
     if assignment is None:
