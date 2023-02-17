@@ -1,6 +1,10 @@
 from nim import train, play
 
-ai = train(200000)
+ai = train(10000)
 
-for i in range(10):
-    play(ai)
+ans = "yes"
+
+while ans == "yes":
+    play(ai, human_player=1)
+
+    ans = input("Do you want to play again (yes / no): ")
