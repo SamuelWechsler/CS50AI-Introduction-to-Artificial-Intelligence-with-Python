@@ -1,6 +1,11 @@
 from nim import train, play
+from datetime import datetime
 
-ai = train()
+t1 = datetime.now()
+ai = train(1000)
+t2 = datetime.now()
+
+print("Training finished in ", t2 - t1)
 
 ans = "yes"
 
