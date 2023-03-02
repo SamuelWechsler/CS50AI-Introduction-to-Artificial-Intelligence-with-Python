@@ -86,16 +86,21 @@ def get_model():
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
 
-
-    model = tf.keras.Sequential(
+    # Create a convolutional neural network
+    model = tf.keras.models.Sequential(
         [
             # convolutional layer
             tf.keras.layers.Conv2D(
-                30, (3,3), activation="relu", input_shape=(30,30,3)
+                64, (3,3), activation="relu", input_shape=(30,30,3)
             ),
-
             # Max-pooling layer
+            tf.keras.layers.MaxPooling2D(pool_size=(3,3)),
+
+            # repeat conv and pooling
+            tf.keras.layers.Conv2D(32, (3, 3), activation="relu"),
             tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
+            # tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
+            # tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
 
             # Flatten units
             tf.keras.layers.Flatten(),
@@ -108,6 +113,8 @@ def get_model():
             tf.keras.layers.Dense(43, activation="softmax")
         ]
     )
+
+    print(model.summary())
 
     # Train neural net
     model.compile(
