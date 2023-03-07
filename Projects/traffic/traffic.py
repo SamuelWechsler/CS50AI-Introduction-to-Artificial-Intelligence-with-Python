@@ -61,7 +61,7 @@ def load_data(data_dir):
     images = []
     labels = []
 
-    for i in range(43):
+    for i in range(NUM_CATEGORIES):
         cat_dir = data_dir + '/' + str(i)
 
         for file in os.listdir(cat_dir):
@@ -69,7 +69,7 @@ def load_data(data_dir):
             im = cv2.imread(cat_dir + '/' + file)
 
             # resize image
-            resizeIm = cv2.resize(im, (30, 30))
+            resizeIm = cv2.resize(im, (IMG_HEIGHT, IMG_WIDTH))
 
             # append data and category
             images.append(resizeIm)
@@ -91,26 +91,25 @@ def get_model():
         [
             # convolutional layer
             tf.keras.layers.Conv2D(
-                64, (3,3), activation="relu", input_shape=(30,30,3)
+                32, (3,3), activation="relu", input_shape=(IMG_HEIGHT,IMG_WIDTH,3)
             ),
             # Max-pooling layer
-            tf.keras.layers.MaxPooling2D(pool_size=(3,3)),
+            tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
 
             # repeat conv and pooling
             tf.keras.layers.Conv2D(32, (3, 3), activation="relu"),
             tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
-            # tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
-            # tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
 
             # Flatten units
             tf.keras.layers.Flatten(),
 
             # Add a hidden layer with dropout
             tf.keras.layers.Dense(128, activation="relu"),
+            tf.keras.layers.Dense(128, activation="relu"),
             tf.keras.layers.Dropout(0.5),
 
             # Add an output layer with output units for all 43 categories
-            tf.keras.layers.Dense(43, activation="softmax")
+            tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
         ]
     )
 
