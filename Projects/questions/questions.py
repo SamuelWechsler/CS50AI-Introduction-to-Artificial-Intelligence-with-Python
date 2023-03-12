@@ -154,9 +154,6 @@ def top_sentences(query, sentences, idfs, n):
     
     ranking = sorted(ranking, key=lambda tup: (tup[1], tup[2]), reverse=True)
 
-    for i in range(10):
-        print(ranking[i])
-
     return [ele[0] for ele in ranking][:n]
 
 
